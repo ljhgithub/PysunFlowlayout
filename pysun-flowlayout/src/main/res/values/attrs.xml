@@ -5,6 +5,7 @@
     <declare-styleable name="FlowLayout">
         <attr name="flHorizontalSpacing" format="dimension" />
         <attr name="flVerticalSpacing" format="dimension" />
+        <attr name="flLines" format="integer" />
     </declare-styleable>
 
 

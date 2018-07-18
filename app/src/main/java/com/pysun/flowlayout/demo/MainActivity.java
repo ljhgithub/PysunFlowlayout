@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         flLabel = findViewById(R.id.fl_label);
         btnEidt.setOnClickListener(this);
         DefaultFlowLabel defaultFlowLabel;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 25; i++) {
             defaultFlowLabel = new DefaultFlowLabel(this, flLabel);
             defaultFlowLabel.setLabel(new DefaultFlowLabel.Label("你好," + i, i + ""));
             defaultFlowLabel.setLabelCallback(this);
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onSelected(DefaultFlowLabel.Label label) {
 
-        Toast.makeText(this,label.name,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, label.name, Toast.LENGTH_SHORT).show();
     }
 
     @Override
