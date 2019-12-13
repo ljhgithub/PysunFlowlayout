@@ -3,7 +3,6 @@ package com.pysun.flowlayout;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -19,7 +18,9 @@ public class FlowLayout extends ViewGroup {
     private int horizontalSpace;
     private int verticalSpace;
     private Integer lines;
-
+    public final static int SPREAD = 1;
+    public final static int SPREAD_INSIDE = 2;
+    private int chainType =0;
 
     private List<Row> rows;
     private Row curRow;
@@ -88,8 +89,10 @@ public class FlowLayout extends ViewGroup {
                     curRow.width -= horizontalSpace;//上一行的宽度的horizontalSpace
                     flowWidth = Math.max(flowWidth, curRow.width);
                 }
+
                 rows.add(curRow);
                 curRow = new Row(paddingLeft, 0);
+                curRow.setParentWidth(useWidth);
 
             }
             curRow.addElement(new Element(childView, curRow.width, preElementBottom, curRow.width + childWidth, childHeight + preElementBottom));
@@ -110,6 +113,7 @@ public class FlowLayout extends ViewGroup {
         preElementBottom += curRow.height;//最后一行底部Y坐标
         curRow.width -= horizontalSpace;//最后一行的宽度的horizontalSpace
         rows.add(curRow);
+        curRow.setParentWidth(useWidth);
         rows.remove(0);//移除默认添加的第一行
         flowWidth = Math.max(flowWidth, curRow.width);//最后一行
 
@@ -120,6 +124,9 @@ public class FlowLayout extends ViewGroup {
     }
 
 
+    public void setChainType(int type){
+        this.chainType =type;
+    }
     public void init() {
         rows = new ArrayList<>();
         curRow = new Row(10000, -verticalSpace);//默认添加的第一行
@@ -144,23 +151,64 @@ public class FlowLayout extends ViewGroup {
 
         for (Row row : rows) {
 
-            for (Element element : row.elements) {
-                element.layout();
-                element.toString();
+            row.buildFixedSize(chainType);
+            for (int i = 0; i < row.elements.size(); i++) {
+                Element element = row.elements.get(i);
+                if (chainType == SPREAD) {
+                    element.layout(row.getFixedSize() * (row.elements.size() == 1 ? 1 : (i + 1)) - horizontalSpace * (i));
+                } else if (chainType == SPREAD_INSIDE) {
+                    element.layout(row.getFixedSize() * (row.elements.size() == 1 ? 1 : i) - horizontalSpace * (i));
+                } else {
+                    element.layout();
+                }
+
+//                element.toString();
             }
         }
 
     }
 
     public class Row {
+        private int parentWidth;
         List<Element> elements;
         int width;
         int height;
+
+
+        private int fixedSize;
 
         Row(int width, int height) {
             elements = new ArrayList<>();
             this.width = width;
             this.height = height;
+        }
+
+        public void setParentWidth(int parentWidth) {
+            this.parentWidth = parentWidth;
+        }
+
+
+        public void buildFixedSize(int chainType) {
+            int freeSpace = parentWidth;
+            for (Element element : elements) {
+                freeSpace -= (element.right - element.left);
+            }
+            if (elements.size() > 1) {
+                if (chainType==SPREAD){
+                    fixedSize = freeSpace / (elements.size() + 1);
+                }else if (chainType==SPREAD_INSIDE){
+                    fixedSize = freeSpace / (elements.size() - 1);
+                }else {
+                    fixedSize = freeSpace / (elements.size() - 1);
+                }
+
+            } else if (elements.size() == 1) {
+                fixedSize = freeSpace / 2;
+            }
+        }
+
+        public int getFixedSize() {
+            return fixedSize;
         }
 
         void addElement(Element element) {
@@ -187,7 +235,7 @@ public class FlowLayout extends ViewGroup {
         private View view;
         private int top, left, right, bottom;
 
-        Element(View view, int top, int left, int right, int bottom) {
+        Element(View view, int left, int top, int right, int bottom) {
             this.view = view;
             this.top = top;
             this.left = left;
@@ -196,7 +244,11 @@ public class FlowLayout extends ViewGroup {
         }
 
         public void layout() {
-            view.layout(top, left, right, bottom);
+            view.layout(left, top, right, bottom);
+        }
+
+        public void layout(int offset) {
+            view.layout(left + offset, top, right + offset, bottom);
         }
 
         @Override

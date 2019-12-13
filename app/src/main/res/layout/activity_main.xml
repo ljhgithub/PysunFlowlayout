@@ -17,15 +17,40 @@
 
 
     <com.pysun.flowlayout.FlowLayout
-        android:id="@+id/fl_label"
+        android:id="@+id/fl_label_edit"
         android:layout_width="0dp"
+        android:background="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        app:flLines="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_edit">
 
     </com.pysun.flowlayout.FlowLayout>
+
+    <com.pysun.flowlayout.FlowLayout
+        android:id="@+id/fl_label_spread"
+        android:layout_width="0dp"
+        android:background="#112233"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fl_label_edit">
+
+    </com.pysun.flowlayout.FlowLayout>
+
+    <com.pysun.flowlayout.FlowLayout
+        android:id="@+id/fl_label_spread_inside"
+        android:layout_width="0dp"
+        android:background="@color/colorAccent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fl_label_spread">
+
+    </com.pysun.flowlayout.FlowLayout>
+
 
 </android.support.constraint.ConstraintLayout>
